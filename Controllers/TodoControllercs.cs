@@ -1,5 +1,7 @@
-﻿using backend_todo.Models;
+﻿using backend_todo.Data;
+using backend_todo.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend_todo.Controllers;
 
@@ -7,19 +9,25 @@ namespace backend_todo.Controllers;
 [Route("api/[controller]")]
 public class TodoController : ControllerBase
 {
-    private static readonly List<TodoTask> Todos = new();
+    private readonly AppDbContext _context;
+
+    public TodoController(AppDbContext context)
+    {
+        _context = context;
+    }
 
     [HttpGet]
-    public ActionResult<List<TodoTask>> GetTodos()
+    public async Task<ActionResult<List<TodoTask>>> GetTodos()
     {
-        return Ok(Todos);
+        var todos = await _context.Todos.ToListAsync();
+        return Ok(todos);
     }
 
     [HttpPost]
-    public ActionResult<TodoTask> CreateTodo(TodoTask todo)
+    public async Task<ActionResult<TodoTask>> CreateTodo(TodoTask todo)
     {
-        todo.Id = Todos.Count + 1;
-        Todos.Add(todo);
+        _context.Todos.Add(todo);
+        await _context.SaveChangesAsync();
 
         return Ok(todo);
     }
