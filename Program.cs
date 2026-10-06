@@ -16,7 +16,7 @@ namespace backend_todo
                 options.AddPolicy("Frontend", policy =>
                 {
                     policy
-                        .WithOrigins("http://localhost:5173", "http://localhost:3000")
+                        .WithOrigins("http://localhost:5173", "http://localhost:3000", "http://16.170.215.63:3000")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
